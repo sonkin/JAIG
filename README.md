@@ -80,9 +80,12 @@ As a result, a button for launching JAIG should appear in the top bar.
 
 To use JAIG, you need to:
 1. Create a folder
-2. Create a prompt file in this folder
-3. Select the prompt file and click the JAIG button
-4. Wait for the generation to complete
+2. Create a prompt file in this folder with .txt extension (example: prompt.txt)
+3. Describe a prompt in the file (ex: Generate Java application which prints "Hey from AI!")
+4. Click the JAIG button when editor is open
+5. Wait for the generation to complete
+
+JAIG will generate file <prompt-name>-response.txt which contains a response from GPT model.
 
 ## License
 
