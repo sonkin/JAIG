@@ -1,0 +1,141 @@
+openAIApiKey: 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
+temperature: 0.0
+
+# To enable proxy, uncomment the following lines and insert your proxy key
+#gptProxy: yes
+#key: <INSERT PROXY KEY HERE>
+
+#model: gpt-4
+#model: gpt-4-1106-preview
+model: gpt-3.5-turbo-1106
+#model: gpt-3.5-turbo
+#model: gpt-3.5-turbo-16k
+#model: gpt-3.5-turbo-0301
+seed: 1
+
+# generateResponse: send the request to AI and get the response
+# comment out if you want to send request manually
+generateResponse: yes
+
+# createPatch: create or update patch in case if parsed folder was created before and there are some changes in the code
+createPatch: no
+
+# parseJavaCode: split AI response into .java files and put it to folders according to package name
+# works only if number of lines with "package ..." == number of classes and interfaces in the response
+# comment out if you do not need to parse the response automatically
+# parsed code is saved to folder <prompt>-response-parsed
+parseJavaCode: yes
+
+# applyPatch: apply .patch file if it is found
+# patched code is saved to folder <prompt>-response-patched
+applyPatch: yes
+
+# experimental mode to automatically merge the generated code with the existing code
+createMerge: no
+
+# automatically run merge prompts after parsing
+applyMerge: no
+
+# before overwriting file in src folder by the generated code, create a backup of files to be replaced
+# backup files are saved in <prompt>-response-backup
+createSrcBackup: yes
+
+# writeResponseToSrc: before overwriting file in src folder by the generated code, create a backup of files to be replaced
+# backup files are saved in <prompt>-response-backup
+writeResponseToSrc: yes
+
+# createRollback: create a rollback file which will allow to restore the state before applying prompt
+createRollback: yes
+
+# always rollback to the previous state before applying the prompt
+applyRollback: yes
+
+#  preParseCountdown: how many seconds to wait before parsing the code:
+#  this time is given to the user to be able to stop parsing
+#  if the generated result is not what was expected
+preParseCountdown: 1
+
+# write parsed java files to this folder if writeResponseToSrc is auto or if we used #src in prompt
+srcFolder: src/main/java
+
+# write parsed java files to this folder if we use #test in prompt
+testFolder: src/test/java
+
+promptsLibraryShortHint:
+  r=refactor, e=explain, c=add comments, td=todos
+promptsLibrary:
+  r:
+    Suggest the refactoring of this code fragment. Explain the refactoring.
+  e:
+    Explain the code fragment
+  explain:
+    Explain the code fragment
+  c:
+    Show the same code but with comments
+  comment:
+    Show the same code but with comments
+  doc:
+    Show documentation for this code fragment from Java or Spring
+  javadoc:
+    Add javadoc comments for every method
+  td:
+    Response should contain the same code fragment (only the code),
+    but comments with TODO should be replaced with implementation.
+  fn:
+    Refactor this code fragment to a functional code.
+  test:
+    Write a test for this code fragment.
+
+# this prompt is used to merge the generated code with the existing code
+# [[old]] is the previously generated code (from -response-parsed-old folder)
+# [[updated]] is replaced with the existing code in src/main/java
+# [[new]] is the newly generated code
+mergePrompt: |
+  I had a file with the following content (text up to @@@ symbols):
+  [[old]]
+  @@@
+  
+  I changed it, and now it looks like this (text up to @@@ symbols):
+  [[updated]]
+  @@@
+  
+  I need to apply all these changes to the generated file (text up to @@@ symbols):
+  [[new]]
+  @@@
+  
+  Apply all the changes that have been made.
+  Merge all changes which I made with all changes in generated file.
+  Output only the contents of the file without additional comments.
+  
+  # Don't remove nomerge, we need it because merge itself should not create a merge
+  #nomerge
+
+# this prompt is used to merge the generated code with the existing code
+# [[old]] is the previously generated code (from -parsed-backup folder)
+# [[new]] is the newly generated code with updates to be applied
+mergeIncompletePrompt: |
+  I had a file with the following initial content (text up to @@@ symbols):
+  [[old]]
+  @@@
+  
+  I got the response from GPT to apply these changes (text up to @@@ symbols):
+  [[new]]
+  @@@
+  
+  Print the contents of the file in which all these changes are applied.
+  Keep the original content of the initial file as much as possible, but apply changes to it.
+  Try to make sure that you end up with a valid Java file.
+  Try to apply all the changes that have been made.
+  Output only the contents of the file, without additional comments.
+  
+  # Don't remove nomerge, we need it because merge itself should not create a merge
+  #nomerge
+
+# these regular expressions are used to determine the file name for the generated Java code
+javaFileNameRegexp:
+  - public class ([^\s]+)
+  - public abstract class ([^\s]+)
+  - class ([^\s]+)
+  - public interface ([^\s]+)
+  - public enum ([^\s]+)
+  - public record ([^\s]+)

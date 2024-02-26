@@ -1,0 +1,11 @@
+<configuration>
+
+    <!-- Set the log level to INFO for the Spring framework -->
+    <logger name="org.springframework" level="INFO" />
+
+    <!-- Exclude specific loggers from being logged -->
+    <logger name="io.netty" level="WARN" />
+
+    <!-- Define your appenders and other configuration -->
+
+</configuration>
