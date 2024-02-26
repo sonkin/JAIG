@@ -74,7 +74,7 @@ To add an icon (button) for conveniently calling JAIG, you need:
 1.	Switch IDEA to the new interface by selecting the Enable new UI checkbox in the settings
 2.	Right-click on the IDEA top bar, select Customize Toolbar...
 3.	Select the Left section, click +, select Add Action...
-4.	Select JAIG in the list, and select Enable New UI as the icon at the bottom...
+4.	Select JAIG in the list, and select Enable New UI as the icon at the bottom
 5.  Close windows with the OK button
 
 As a result, a button for launching JAIG should appear in the top bar.
@@ -88,7 +88,7 @@ To use JAIG, you need to:
 4. Click the JAIG button when editor is open
 5. Wait for the generation to complete
 
-JAIG will generate file <prompt-name>-response.txt which contains a response from GPT model.
+JAIG will generate file prompt_name-response.txt which contains a response from GPT model.
 
 ## License
 
