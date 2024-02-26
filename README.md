@@ -1,8 +1,8 @@
 # JAIG
 
-JAIG is Java AI-powered Code Generator.
+JAIG is a Java AI-powered Code Generator.
 
-JAIG is based on the OpenAI GPT models used for code generation.
+JAIG is based on the OpenAI GPT models used for the code generation.
 
 ```
                       *        *         *
@@ -23,6 +23,7 @@ JAIG is based on the OpenAI GPT models used for code generation.
                    **      *      **
                 *       *      *
 ```
+
 ## JAIG demos and documentation
 
 [Detailed JAIG video presentation](https://youtu.be/fohX8WbdWp8)
@@ -47,7 +48,7 @@ JAIG is based on the OpenAI GPT models used for code generation.
 
 ## Installation
 
-First, you need to take JAIG.jar and JAIG.yaml from **JAIG folder** and copy it to your project.
+First, you need to take **JAIG folder** (with JAIG.jar and JAIG.yaml files) and copy it to your project.
 Then, you need to specify your *openAIApiKey* in the **JAIG.yaml** file.
 Then, install JAIG into IDEA as described below.
 
@@ -79,7 +80,7 @@ As a result, a button for launching JAIG should appear in the top bar.
 ## Usage
 
 To use JAIG, you need to:
-1. Create a folder
+1. Create a folder which will contain JAIG artifacts (prompt, request, response, etc.)
 2. Create a prompt file in this folder with .txt extension (example: prompt.txt)
 3. Describe a prompt in the file (ex: Generate Java application which prints "Hey from AI!")
 4. Click the JAIG button when editor is open
