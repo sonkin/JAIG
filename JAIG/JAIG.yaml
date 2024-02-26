@@ -1,4 +1,4 @@
-openAIApiKey: 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
+openAIApiKey: <INSERT API KEY HERE>
 temperature: 0.0
 
 # To enable proxy, uncomment the following lines and insert your proxy key
