@@ -1,6 +1,7 @@
 openAIApiKey: <INSERT API KEY HERE>
 temperature: 0.0
 
+
 # To enable proxy, uncomment the following lines and insert your proxy key
 #gptProxy: yes
 #key: <INSERT PROXY KEY HERE>
