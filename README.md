@@ -35,21 +35,21 @@ JAIG is based on the OpenAI GPT models used for code generation.
 
 ## JAIG main features
 
-- Generate a code in IDEA
-- Include the needed source files to the request
-- Parse the generated Java code and sort into folders within src/main/java
-- Configure GPT temperature, model name, etc.
+- Generate a code in IntelliJ IDEA
+- Include the necessary source files to the AI request
+- Parse the generated Java code and sort into folders within src/main/java directory
+- Configure GPT temperature, model name, etc. globally and for every request
 - Merge the code changes with AI updates
-- Prompt templates
-- Prompt pipelines
-- Rollbacks
-- Refactoring mode
+- Prompt templates (placeholders + to be filled from requirements yaml file; support for Velocity engine for complicated cases)
+- Prompt pipelines (running a sequence of prompts)
+- Rollbacks (possibility to restore the state before AI generated code was applied)
+- Refactoring (possibility to update the existing code based on AI-generated response in a dialog mode)
 
 ## Installation
 
-First, you need to take JAIG.jar and JAIG.yaml from JAIG folder and copy it to your project.
-Then, you need to specify your openAIApiKey in the JAIG.yaml file.
-Then, install it into IDEA as described below.
+First, you need to take JAIG.jar and JAIG.yaml from **JAIG folder** and copy it to your project.
+Then, you need to specify your *openAIApiKey* in the **JAIG.yaml** file.
+Then, install JAIG into IDEA as described below.
 
 ## Integration with IntelliJ IDEA
 
