@@ -49,6 +49,7 @@ JAIG is based on the OpenAI GPT models used for code generation.
 
 First, you need to take JAIG.jar and JAIG.yaml from JAIG folder and copy it to your project.
 Then, you need to specify your openAIApiKey in the JAIG.yaml file.
+Then, install it into IDEA as described below.
 
 ## Integration with IntelliJ IDEA
 
