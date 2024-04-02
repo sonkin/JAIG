@@ -49,7 +49,7 @@ public class GptRequestRunner {
             String response = gptRequest(inputFileContent);
 
             // Write the response to the output file in UTF-8 encoding
-            Files.write(Path.of(outputFilePath), response.getBytes(StandardCharsets.UTF_8),
+            Files.writeString(Path.of(outputFilePath), response,
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
             return response;
@@ -217,14 +217,13 @@ public class GptRequestRunner {
                     })
             .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)))
             .doOnError(error -> out.println("\n\nConnection error: \n" + error.getMessage()))
-            .doOnComplete(() -> {
-                out.println(ANSI_RESET+ANSI_BOLD+
-                        "\n\n====================== END OF AI RESPONSE ======================"+ANSI_RESET);
-            })
+            .doOnComplete(() -> out.println(ANSI_RESET+ANSI_BOLD+
+                    "\n\n====================== END OF AI RESPONSE ======================"+ANSI_RESET))
             .doFinally(signalType -> loadingProcess.stop())
             .blockLast();
         } catch (Exception e) {
             System.err.println("An error occurred during GPT request: " + e.getMessage());
+            System.out.println(e.getCause().getMessage());
         }
 
         return result.toString();
