@@ -1,28 +1,29 @@
 # JAIG
 
-JAIG is Java AI-powered Code Generator.
+JAIG is a Java AI-powered Code Generator.
 
-JAIG is based on the OpenAI GPT models used for code generation.
+JAIG is based on the OpenAI GPT models used for the code generation.
 
 ```
-                      *        *         *
-                   ***       **       ***
-                 *****     ****    *******
-               *******   ******   **********
-             ********** ********* **************
-           ************* ************* *************
-          ***███████*****█████******███**██████████***
-          *******███****███*███*****███**███***********
-          *******███***███***███****███**███***████****
-          **██***███**███████████***███**███*****██****
-           *████████*███*******███**███**██████████***
-            ************* *********** **************
-               *********** ********* ************
-                  *******   ******   ********
-                    ****    ***     ***
-                   **      *      **
-                *       *      *
+              *        *         *
+           ***       **       ***
+         *****     ****    *******
+       *******   ******   **********
+     ********** ********* **************
+   ************* ************* *************
+  ***███████*****█████******███**██████████***
+  *******███****███*███*****███**███***********
+  *******███***███***███****███**███***████****
+  **██***███**███████████***███**███*****██****
+   *████████*███*******███**███**██████████***
+    ************* *********** **************
+       *********** ********* ************
+          *******   ******   ********
+            ****    ***     ***
+           **      *      **
+        *       *      *
 ```
+
 ## JAIG demos and documentation
 
 [Detailed JAIG video presentation](https://youtu.be/fohX8WbdWp8)
@@ -47,8 +48,10 @@ JAIG is based on the OpenAI GPT models used for code generation.
 
 ## Installation
 
-First, you need to take JAIG.jar and JAIG.yaml from **JAIG folder** and copy it to your project.
+First, you need to take **JAIG folder** (with JAIG.jar and JAIG.yaml files) and copy it to your project.
+
 Then, you need to specify your *openAIApiKey* in the **JAIG.yaml** file.
+
 Then, install JAIG into IDEA as described below.
 
 ## Integration with IntelliJ IDEA
@@ -71,7 +74,7 @@ To add an icon (button) for conveniently calling JAIG, you need:
 1.	Switch IDEA to the new interface by selecting the Enable new UI checkbox in the settings
 2.	Right-click on the IDEA top bar, select Customize Toolbar...
 3.	Select the Left section, click +, select Add Action...
-4.	Select JAIG in the list, and select Enable New UI as the icon at the bottom...
+4.	Select JAIG in the list, and select Enable New UI as the icon at the bottom
 5.  Close windows with the OK button
 
 As a result, a button for launching JAIG should appear in the top bar.
@@ -79,10 +82,13 @@ As a result, a button for launching JAIG should appear in the top bar.
 ## Usage
 
 To use JAIG, you need to:
-1. Create a folder
-2. Create a prompt file in this folder
-3. Select the prompt file and click the JAIG button
-4. Wait for the generation to complete
+1. Create a folder which will contain JAIG artifacts (prompt, request, response, etc.)
+2. Create a prompt file in this folder with .txt extension (example: prompt.txt)
+3. Describe a prompt in the file (ex: Generate Java application which prints "Hey from AI!")
+4. Click the JAIG button when editor is open
+5. Wait for the generation to complete
+
+JAIG will generate file prompt_name-response.txt which contains a response from GPT model.
 
 ## License
 
