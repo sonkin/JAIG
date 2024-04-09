@@ -83,10 +83,11 @@ public class LifecyclePhasesProcessor {
                             if (isPathFromContentRoot) pathPrefix = ".";
                             // Windows does not support wildcards ** in normalize(), so we need to temporally remove it
                             line = line.replaceAll("\\*\\*", "all_files_wildcard");
+                            line = line.replaceAll("\\*", "wildcard");
                             String pattern = Path.of(pathPrefix + line).normalize().toString();
                             // we restore the wildcards
-                            String finalPattern = pattern.replaceAll("all_files_wildcard", "\\*\\*");
-
+                            String finalPattern = pattern.replaceAll("all_files_wildcard", "\\*\\*")
+                                    .replaceAll("wildcard", "\\*");
                             Files.walkFileTree(Paths.get("."), new SimpleFileVisitor<Path>() {
                                 @Override
                                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
