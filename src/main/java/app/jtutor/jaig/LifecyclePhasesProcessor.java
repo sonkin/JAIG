@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static app.jtutor.WindowsUtil.windowsCompatiblePath;
 import static app.jtutor.jaig.JAIGUseCasesProcessor.processRollback;
 
 /**
@@ -509,7 +510,9 @@ public class LifecyclePhasesProcessor {
                 if (localConfig.getSaveResponseTo() != null) {
                     targetFolder = ".";
                 }
-                String final_targetFolder = targetFolder;
+                String final_targetFolder = windowsCompatiblePath(targetFolder);
+                // Windows compatible path
+                destinationFolder = windowsCompatiblePath(destinationFolder);
                 System.out.println("Writing files from folder "+destinationFolder+" to folder "+targetFolder);
 
                 // traverse -parsed folder to find all files generated from response
@@ -526,12 +529,14 @@ public class LifecyclePhasesProcessor {
                             String srcFile = file.toString().replaceFirst(
                                     ".*" + generatedFolderPosfix,
                                     final_targetFolder);
+                            srcFile = windowsCompatiblePath(srcFile);
                             // this is a new file - no need to create a backup
                             if (!Files.exists(Path.of(srcFile))) {
                                 rollbackLog.add("Delete  "+srcFile);
                             } else { // file exists - creating a backup
                                 // path to the backup folder
-                                String generatedFile = file.toString().replaceFirst(
+                                String filePath = windowsCompatiblePath(file.toString());
+                                String generatedFile = filePath.replaceFirst(
                                         "(.*)/(.*)" + generatedFolderPosfix,
                                         "$1/$2-backup");
 

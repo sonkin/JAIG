@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static app.jtutor.WindowsUtil.windowsCompatiblePath;
+
 /**
  * Code Parser is splitting GPT response with the code into .java files
  * and organizing files into folders based on the package name.
@@ -89,6 +91,8 @@ public class CodeParser {
                                   List<String> section, String localCopyFolder,
                                   String inputFile) {
         String fullDirectoryPathLocalCopy = localCopyFolder + "/" + packageName;
+        // Windows path fix
+        fullDirectoryPathLocalCopy = windowsCompatiblePath(fullDirectoryPathLocalCopy);
         // adding the JAIG header with a path to the response from GPT
         section.add(0, JAIGJavaHeader.INSTANCE.generate(inputFile));
 
