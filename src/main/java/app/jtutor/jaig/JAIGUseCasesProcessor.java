@@ -235,8 +235,8 @@ public class JAIGUseCasesProcessor {
 
                 /*
                 This is the example of contents of rollback file:
-                Restore src/main/java/ru/ibs/eduplatform/controllers/EnrollmentController.java
-                from    generated_requests/enrollment2/04_controller/controller-parsed/ru/ibs/eduplatform/controllers/EnrollmentController.java
+                Restore src/main/java/com/luxoft/eduplatform/controllers/EnrollmentController.java
+                from    generated_requests/enrollment2/04_controller/controller-parsed/com/luxoft/eduplatform/controllers/EnrollmentController.java
                 Delete  ./rest/prepare-test-enrollments.http
                  */
                 // analyze lines

@@ -62,6 +62,26 @@ public class LifecyclePhasesProcessor {
 
         String gptResponse = null;
 
+        // PHASE 0: rollback previous results before processing prompt
+        if (GlobalConfig.INSTANCE.isApplyRollback()) {
+            Path inputPath = Paths.get(inputFile);
+            try {
+                List<String> lines = Files.readAllLines(inputPath);
+                // if the prompt contains #norollback, #merge, #merge-incomplete or #patch, we should not apply rollback
+                boolean applyRollback = lines.stream().noneMatch(l -> l.startsWith("#norollback") ||
+                        l.startsWith("#merge") || l.startsWith("#patch"));
+
+                if (applyRollback) {
+                    String rollbackFile = inputFile.replace(".txt", "-parsed.rollback");
+                    if (new File(rollbackFile).exists()) {
+                        processRollback(rollbackFile, SRC_FOLDER);
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         // PHASE 1: processing prompt (inputFile) inclusions and directives, generate the request, save it to outputFile
         if (!processingResponse) {
             try {
@@ -243,14 +263,6 @@ public class LifecyclePhasesProcessor {
             } catch (IOException e) {
                 System.err.println("ERROR: cannot read response from file "+inputFile);
                 return;
-            }
-        }
-
-        // rollback previous results before processing prompt
-        if (GlobalConfig.INSTANCE.isApplyRollback() || localConfig.isApplyRollback()) {
-            String rollbackFile = inputFile.replace(".txt", "-parsed.rollback");
-            if (new File(rollbackFile).exists()) {
-                processRollback(rollbackFile, SRC_FOLDER);
             }
         }
 

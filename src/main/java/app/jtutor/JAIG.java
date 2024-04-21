@@ -15,7 +15,7 @@ public class JAIG {
 //         String inputFileOrFolder = "./requests/test/prompt.txt";
 
         BannerPrinter.printBanner();
-        System.out.println("********** JAIG: Java AI Generator v.09.04.2024 **********");
+        System.out.println("********** JAIG: Java AI Generator v.21.04.2024 **********");
         if (inputFileOrFolder == null) {
             if (args.length == 0 || args[0].isEmpty()) {
                 System.err.println("You should select the file for which you want to apply JAIG");
