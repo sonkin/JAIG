@@ -24,4 +24,6 @@ public class LocalConfig extends Config {
 
     private boolean mergeIncomplete;
 
+    private String packageName;
+
 }

@@ -7,7 +7,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,15 +23,54 @@ import static app.jtutor.WindowsUtil.windowsCompatiblePath;
  */
 public class CodeParser {
 
-    public String parse(String inputFile, String parsedFolder) {
-        List<String> lines;
+    /**
+     * Method adds package name to every public class in code.
+     */
+    public static String addPackages(String code, String packageName) {
+        String[] lines = code.split("\n");
+        StringBuilder result = new StringBuilder();
 
-        try {
-            lines = Files.readAllLines(Paths.get(inputFile), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            System.err.println("Error while reading the input file: " + e.getMessage());
-            return null;
+        // step 1: find all lines started with "public "
+        List<Integer> publicLines = new ArrayList<>();
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].startsWith("public ")) {
+                publicLines.add(i);
+            }
         }
+
+        // step 2: find the last line of the previous
+        // class for each public class
+        Set<Integer> classEnds = new HashSet<>();
+        skipAddingPackage:
+        for (Integer publicLine : publicLines) {
+            int j = publicLine - 1;
+            while (j >= 0 && !lines[j].startsWith("}")) {
+                if (lines[j].startsWith("package ")) {
+                    // replace package name if it is different
+                    if (!lines[j].equals("package " + packageName + ";")) {
+                        lines[j] = "package " + packageName + ";";
+                    }
+                    continue skipAddingPackage;
+                }
+                j--;
+            }
+            classEnds.add(j+1);
+        }
+
+        // step 3: insert package name after the last line
+        // of the previous class for each public class
+        for (int i=0; i<lines.length; i++) {
+            if (classEnds.contains(i)) {
+                result.append("\npackage ").append(packageName).append(";\n");
+            }
+            result.append(lines[i]).append("\n");
+        }
+
+        return result.toString();
+    }
+
+    public static String parse(String inputFileName, String code, String parsedFolder) {
+        List<String> lines = List.of(code.split("\n"));
 
         List<String> section = new ArrayList<>();
         String packageName = null;
@@ -40,7 +81,7 @@ public class CodeParser {
             if (line.startsWith("package ")) {
                 // Write the previous section to a file
                 if (packageName != null && className != null) {
-                    writeFile(packageName, className, section, parsedFolder, inputFile);
+                    writeFile(packageName, className, section, parsedFolder, inputFileName);
                     section.clear();
                     className = null;
                 }
@@ -68,14 +109,14 @@ public class CodeParser {
 
         // Write the last section to a file
         if (packageName != null && className != null) {
-            writeFile(packageName, className, section, parsedFolder, inputFile);
+            writeFile(packageName, className, section, parsedFolder, inputFileName);
         }
         return parsedFolder;
     }
 
     // Method to find the class name (or interface name, enum name, etc.)
     // in the code line using the regex patterns in JAIG.yml (javaFileNameRegexp)
-    private String findClassName(String line) {
+    private static String findClassName(String line) {
         List<String> javaFileNameRegexps = GlobalConfig.INSTANCE.getJavaFileNameRegexps();
         for (String regex : javaFileNameRegexps) {
             Pattern pattern = Pattern.compile("^" + regex + ".*\\{$");

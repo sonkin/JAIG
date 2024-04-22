@@ -200,6 +200,8 @@ public class LifecyclePhasesProcessor {
                         } else if (line.startsWith("#norollback")) {
                             localConfig.setApplyRollback(false);
                             GlobalConfig.INSTANCE.setApplyRollback(false);
+                        } else if (line.startsWith("#package ")) {
+                            localConfig.setPackageName(line.substring("#package ".length()).trim());
                         } else if (line.startsWith("#")) {
                             // this is a comment in prompt, not include
                         } else { // just a regular line - include it
@@ -266,13 +268,21 @@ public class LifecyclePhasesProcessor {
             }
         }
 
+        // PRE-PHASE4: add packages if they are not specified in the response
+        // before every public class or interface
+        if (localConfig.getPackageName() != null) {
+            gptResponse = CodeParser.addPackages(gptResponse, localConfig.getPackageName());
+
+            System.out.println("After adding packages \n\n"+gptResponse);
+        }
+
         // PHASE 4: parsing the results, if possible
         // parsing is possible if number of "package ..." lines equal to number of classes and interfaces
         boolean autoParseIsPossible = checkGPTResponseForAutoParse(gptResponse);
 
         String parsedCodeFolder = null;
         if (GlobalConfig.INSTANCE.isParseJavaCode() || localConfig.isParseJavaCode()) {
-            parsedCodeFolder = parseCode(inputFile, autoParseIsPossible, localConfig);
+            parsedCodeFolder = parseCode(inputFile, gptResponse, autoParseIsPossible, localConfig);
         } else {
             if (autoParseIsPossible) {
                 System.out.println("Automatic parsing is possible for this response.");
@@ -655,26 +665,26 @@ public class LifecyclePhasesProcessor {
      * If parsing is possible, return the folder with parsed code.
      * If save-to: is used, save the parsed response to the file.
      *
-     * @param inputFile - file with the initial request
+     * @param inputFileName - file with the initial request
      * @param autoParseIsPossible - true if parsing is possible (found packages)
      * @param localConfig - local config for this request
      * @return folder with parsed code or null if parsing is not possible
      */
-    private String parseCode(String inputFile, boolean autoParseIsPossible, LocalConfig localConfig) {
-        String responseFile = inputFile.replace(".txt","-response.txt");
+    private String parseCode(String inputFileName, String code, boolean autoParseIsPossible, LocalConfig localConfig) {
+        String responseFile = inputFileName.replace(".txt","-response.txt");
         String parsedCodeFolder = null;
         if (autoParseIsPossible) {
             System.out.println("\n********** JAIG Code Parser **********");
             System.out.println("The generated code contains Java packages and will be automatically parsed...");
             stopAutoParseByUser();
-            String parsedFolder = inputFile.replace(".txt","")+"-parsed";
+            String parsedFolder = inputFileName.replace(".txt","")+"-parsed";
             prepareParsedFolders(parsedFolder, localConfig);
             // If not interrupted, we continue with the next phase...
-            parsedCodeFolder = new CodeParser().parse(responseFile, parsedFolder);
+            parsedCodeFolder = CodeParser.parse(responseFile, code, parsedFolder);
             // parsedCodeFolder is null if parsing failed, it is used
             // to skip PHASES 5 & 6
         } else if (localConfig.getSaveResponseTo() != null) { // save-to: is used
-            String parsedFolder = inputFile.replace(".txt","")+"-parsed";
+            String parsedFolder = inputFileName.replace(".txt","")+"-parsed";
             prepareParsedFolders(parsedFolder, localConfig);
             try {
                 FileUtils.copyFile(
