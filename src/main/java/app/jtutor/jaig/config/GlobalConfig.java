@@ -17,6 +17,8 @@ public class GlobalConfig extends Config {
     
     private String openAIApiKey;
     private String key;
+    private String endpoint;
+    private String deploymentIdOrModel;
     private String promptsLibraryShortHint;
     private List<String> javaFileNameRegexps;
     private boolean gptProxy;
@@ -37,6 +39,8 @@ public class GlobalConfig extends Config {
         Map<String, Object> yamlData = yaml.load(inputStream);
         setOpenAIApiKey(openAIApiKey = (String) yamlData.get("openAIApiKey"));
         setKey((String) yamlData.get("key"));
+        setEndpoint((String) yamlData.get("endpoint"));
+        setDeploymentIdOrModel((String) yamlData.get("deploymentIdOrModel"));
         setModel( (String) yamlData.get("model"));
         setTemperature((Double) yamlData.get("temperature"));
 

@@ -1,5 +1,9 @@
 openAIApiKey: <INSERT API KEY HERE>
 temperature: 0.0
+endpoint: <INSERT API ENDPOINT HERE>
+# deploymentIdOrModel: Azure OpenAI deployment name
+# comment out if you don't use Azure OpenAI API
+deploymentIdOrModel: <INSERT AZURE API DEPLOYMENT NAME HERE>
 
 
 # To enable proxy, uncomment the following lines and insert your proxy key

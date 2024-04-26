@@ -50,7 +50,7 @@ JAIG is based on the OpenAI GPT models used for the code generation.
 
 First, you need to take **JAIG folder** (with JAIG.jar and JAIG.yaml files) and copy it to your project.
 
-Then, you need to specify your *openAIApiKey* in the **JAIG.yaml** file.
+Then, you need to specify your *openAIApiKey*, *endpoint* and *deploymentIdOrModel* (if you use Azure OpenAI) in the **JAIG.yaml** file.
 
 Then, install JAIG into IDEA as described below.
 
