@@ -2,6 +2,15 @@ package app.jtutor.jaig;
 
 import app.jtutor.jaig.config.GlobalConfig;
 import app.jtutor.jaig.config.LocalConfig;
+import com.azure.ai.openai.OpenAIAsyncClient;
+import com.azure.ai.openai.OpenAIClientBuilder;
+import com.azure.ai.openai.models.ChatCompletionsOptions;
+import com.azure.ai.openai.models.ChatRequestMessage;
+import com.azure.ai.openai.models.ChatRequestUserMessage;
+import com.azure.ai.openai.models.ChatResponseMessage;
+import com.azure.core.credential.AzureKeyCredential;
+import com.azure.core.http.netty.NettyAsyncHttpClientBuilder;
+import com.azure.core.util.CoreUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -19,6 +28,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -132,8 +143,17 @@ public class GptRequestRunner {
             if (localConfig.getModel() != null) model = localConfig.getModel();
             if (localConfig.getTemperature() != null) temperature = localConfig.getTemperature();
         }
-        System.out.println("Using temperature: " + temperature);
-        System.out.println("Using model: " + model);
+
+        if(GlobalConfig.INSTANCE.getEndpoint().contains("azure")){
+            if (GlobalConfig.INSTANCE.getDeploymentIdOrModel() != null) {
+                model = GlobalConfig.INSTANCE.getDeploymentIdOrModel();
+                System.out.println("Using temperature: " + temperature);
+                System.out.println("Using deployment model: " + model);
+            }
+        } else {
+            System.out.println("Using temperature: " + temperature);
+            System.out.println("Using model: " + model);
+        }
 
         StringBuilder result = new StringBuilder();
         inputText = inputText.replaceAll("\\\"", "\\\\\"");
@@ -145,8 +165,7 @@ public class GptRequestRunner {
         if (GlobalConfig.INSTANCE.isGptProxy()) {
              eventStream = getJTutorResponseEventStream(inputText, model, temperature);
         } else {
-            eventStream = extractContentFromJSONStream(
-                    getOpenAIResponseEventStream(inputText, model, temperature));
+            eventStream = getEventStream(GlobalConfig.INSTANCE.getEndpoint(), inputText, model, temperature);
         }
         AtomicInteger doubleQuotesCount = new AtomicInteger();
         LoadingProcess loadingProcess = new LoadingProcess();
@@ -235,7 +254,7 @@ public class GptRequestRunner {
 
         WebClient client = WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .baseUrl("https://api.openai.com/v1/chat/completions") // OpenAI Chat API endpoint
+                .baseUrl(GlobalConfig.INSTANCE.getEndpoint()) // OpenAI Chat API endpoint
                 .defaultHeader("Authorization", "Bearer " + GlobalConfig.INSTANCE.getOpenAIApiKey()) // Authorization header with Bearer token
                 .defaultHeader("Content-Type", "application/json")
                 .build();
@@ -274,6 +293,49 @@ public class GptRequestRunner {
         return eventStream;
     }
 
+    private Flux<String> getAzureOpenAIResponseEventStream(String inputText, Double temperature){
+
+        //Azure OpenAI Client
+        OpenAIAsyncClient client = new OpenAIClientBuilder()
+                .httpClient(new NettyAsyncHttpClientBuilder().responseTimeout(Duration.ofMinutes(2)).build())
+                .credential(new AzureKeyCredential(GlobalConfig.INSTANCE.getOpenAIApiKey()))
+                .endpoint(GlobalConfig.INSTANCE.getEndpoint())
+                .buildAsyncClient();
+
+        // extract seed from local or global config if it is provided
+        Integer seed = GlobalConfig.INSTANCE.getSeed();
+        if (localConfig != null && localConfig.getSeed() != null) {
+            seed = localConfig.getSeed();
+        }
+
+        //inputText's content from the .txt file will be used as ChatRequestMessage
+        List<ChatRequestMessage> chatMessages = new ArrayList<>();
+        chatMessages.add(new ChatRequestUserMessage(inputText));
+
+        //ChatCompletionsOptions config to enable Streaming Mode
+        ChatCompletionsOptions options = new ChatCompletionsOptions(chatMessages);
+        options.setStream(true);
+        options.setN(1);
+        options.setTemperature(temperature);
+//            options.setMaxTokens(1000);
+        options.setSeed(seed.longValue());
+        options.setLogitBias(new HashMap<>());
+
+        //get the response's content as a Flux<String> for further processing
+        Flux<String> chatCompletions = client
+                .getChatCompletionsStream(GlobalConfig.INSTANCE.getDeploymentIdOrModel(), options)
+                .map(c -> {
+                    if (CoreUtils.isNullOrEmpty(c.getChoices())) {
+                        return "";
+                    }
+
+                    ChatResponseMessage delta = c.getChoices().get(0).getDelta();
+
+                    return delta.getContent() == null ? "" : delta.getContent();
+                });
+        return chatCompletions;
+    }
+
     private Flux<String> extractContentFromJSONStream(Flux<String> jsonStream) {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -304,6 +366,14 @@ public class GptRequestRunner {
             }
         })
         .filter(content -> !content.isEmpty()); // Filter out empty strings
+    }
+
+    private Flux<String> getEventStream(String endpoint, String inputText, String model, Double temperature){
+        if(endpoint.contains("azure")){
+            return getAzureOpenAIResponseEventStream(inputText, temperature);
+        } else {
+            return extractContentFromJSONStream(getOpenAIResponseEventStream(inputText, model, temperature));
+        }
     }
 
     private Flux<String> getJTutorResponseEventStream(String inputText, String model, Double temperature) {
