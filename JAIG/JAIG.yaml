@@ -1,6 +1,9 @@
 openAIApiKey: <INSERT API KEY HERE>
 temperature: 0.0
-endpoint: <INSERT API ENDPOINT HERE>
+
+# If you use Azure OpenAI API, replace the endpoint with Azure's endpoint
+endpoint: https://api.openai.com/v1/chat/completions
+
 # deploymentIdOrModel: Azure OpenAI deployment name
 # comment out if you don't use Azure OpenAI API
 deploymentIdOrModel: <INSERT AZURE API DEPLOYMENT NAME HERE>
