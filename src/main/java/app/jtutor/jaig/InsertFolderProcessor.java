@@ -1,6 +1,9 @@
 package app.jtutor.jaig;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,6 +41,18 @@ public class InsertFolderProcessor {
                 // Creating a new file in the new folder
                 File newFile = new File(newFolderPath.toFile(), newName + ".txt");
                 if (newFile.createNewFile()) {
+                    //Write a template content to the new file
+                    String content = """
+                        /path(s)/to/your/inputFiles
+                        
+                        Please provide a request for your specific needs within your project.
+                        
+                        #directives (src, package, test, merge etc.)
+                        """;
+
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(newFile));
+                    writer.write(content);
+
                     System.out.println("New file created: " + newFile);
                 } else {
                     System.out.println("File already exists.");

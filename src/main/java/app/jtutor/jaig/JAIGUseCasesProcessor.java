@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -42,21 +43,59 @@ public class JAIGUseCasesProcessor {
         if (inputFileFile.isDirectory()) {
             // check that inputFileFile starts with 2 digits and _, like 01_
             if (inputFileFile.getName().matches("\\d\\d_.*")) {
-                // insert new folder
-                InsertFolderProcessor.INSTANCE.insertFolder(inputFileOrFolder);
-                return;
+                // show menu
+                System.out.printf("""
+                What do you want to do with the folder %s?
+                1) Insert a new folder
+                2) Create a prompt (.txt file) in the folder
+                3) Create batch file with all prompts (.txt files) in the folder
+                4) Cleanup the folder from all artifacts except prompts
+                
+                Enter nothing if you want to finish the program:
+                """, inputFileOrFolder);
+
+                String answer = new Scanner(System.in).nextLine();
+
+                if (answer.equals("1")) {
+                    // insert new folder
+                    InsertFolderProcessor.INSTANCE.insertFolder(inputFileOrFolder);
+                    return;
+                } else if (answer.equals("2")) {
+                    createPromptFile(inputFileOrFolder);
+                    return;
+                } else if (answer.equals("3")){
+                    if (processFolderCreateBatch(inputFileOrFolder)) return;
+                } else if (answer.equals("4")){
+                    FolderCleanup.cleanFolder(inputFileOrFolder);
+                    return;
+                }
+                else if (answer.isEmpty()) {
+                    System.out.println("Finishing the conversation...");
+                    return;
+                }
             } else {
                 // show menu
                 System.out.printf("""
-                        What do you want to do with the folder %s?
-                        1) Create batch file with all prompts (.txt files) in the folder
-                        2) Cleanup the folder from all artifacts except prompts
-                        """, inputFileOrFolder);
+                What do you want to do with the folder %s?
+                1) Create batch file with all prompts (.txt files) in the folder
+                2) Create a prompt (.txt file) in the folder
+                3) Cleanup the folder from all artifacts except prompts
+                
+                Enter nothing if you want to finish the program:
+                """, inputFileOrFolder);
+
                 String answer = new Scanner(System.in).nextLine();
+
                 if (answer.equals("1")) {
                     if (processFolderCreateBatch(inputFileOrFolder)) return;
                 } else if (answer.equals("2")) {
+                    createPromptFile(inputFileOrFolder);
+                    return;
+                } else if (answer.equals("3")) {
                     FolderCleanup.cleanFolder(inputFileOrFolder);
+                    return;
+                } else if (answer.isEmpty()) {
+                    System.out.println("Finishing the conversation...");
                     return;
                 }
             }
@@ -319,6 +358,43 @@ public class JAIGUseCasesProcessor {
             }
         }
         return false;
+    }
+
+    private static void createPromptFile(String inputFileOrFolder) {
+        Path folderPath = Paths.get(inputFileOrFolder);
+
+        // Reading the new file name from the console
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the new prompt file name (part before .txt): ");
+        String newName = scanner.nextLine();
+        scanner.close();
+
+        try {
+            // Creating a new file in the folder
+            File newFile = new File(folderPath.toFile(), newName + ".txt");
+            if (newFile.createNewFile()) {
+                //Write template content to the new file
+                String content = """
+                    /path(s)/to/your/inputFiles
+                    
+                    Please provide a request for your specific needs within your project.
+                    
+                    #directives (src, package, test, merge etc.)
+                    """;
+
+                BufferedWriter writer = new BufferedWriter(new FileWriter(newFile));
+                writer.write(content);
+
+                System.out.println("New file created: " + newFile);
+            } else {
+                System.out.println("File already exists.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("An error occurred while creating the folder or file.");
+            e.printStackTrace();
+        }
+
     }
 
     private static void deleteFolder(String folder) {
