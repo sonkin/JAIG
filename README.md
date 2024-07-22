@@ -34,6 +34,8 @@ JAIG is based on the OpenAI GPT models used for the code generation.
 
 [JAIG Main ideas](docs/JAIGideas.pdf)
 
+[JAIG Integration with APIs](docs/JAIGIntegration.pdf)
+
 ## JAIG main features
 
 - Generate a code in IntelliJ IDEA

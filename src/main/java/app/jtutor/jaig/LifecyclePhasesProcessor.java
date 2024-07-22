@@ -601,6 +601,8 @@ public class LifecyclePhasesProcessor {
                                 final_targetFolder);
                         try {
                             if (!Files.exists(Path.of(srcFolderFilePath))) {
+                                System.out.println("The path - "+srcFolderFilePath+" - "+"does not exist."
+                                        +" Creating the directory...");
                                 Files.createDirectories(Path.of(srcFolderFilePath));
                             }
                             Files.copy(file, Path.of(srcFolderFilePath), StandardCopyOption.REPLACE_EXISTING);
