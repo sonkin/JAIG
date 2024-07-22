@@ -37,11 +37,6 @@ public class Config {
     // if the generated result is not what was expected
     private int preParseCountdown = 5;
 
-    // write results to this folder if we use writeResponseToSrc or #src in prompt
-    private String srcFolder = "src/main/java";
-    // write results to this folder if we use #test
-    private String testFolder = "src/test/java";
-
     // seed for GPT to generate the same result for the same prompt (make it deterministic)
     private Integer seed;
 

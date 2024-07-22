@@ -56,9 +56,7 @@ public class LifecyclePhasesProcessor {
         boolean autoRunJavaCode = false;
 
         String SRC_FOLDER = GlobalConfig.INSTANCE.getSrcFolder();
-        if (localConfig.getSrcFolder() != null) SRC_FOLDER = localConfig.getSrcFolder();
         String TEST_FOLDER = GlobalConfig.INSTANCE.getTestFolder();
-        if (localConfig.getTestFolder() != null) TEST_FOLDER = localConfig.getTestFolder();
 
         String gptResponse = null;
 

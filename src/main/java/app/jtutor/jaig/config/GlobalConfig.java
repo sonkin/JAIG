@@ -27,6 +27,11 @@ public class GlobalConfig extends Config {
     private String mergePrompt;
     private String mergeIncompletePrompt;
 
+    // write results to this folder if we use writeResponseToSrc or #src in prompt
+    private String srcFolder = "src/main/java";
+    // write results to this folder if we use #test
+    private String testFolder = "src/test/java";
+
     public void parseYamlConfig() {
         Yaml yaml = new Yaml();
         InputStream inputStream = null;

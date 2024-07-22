@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version>  <!-- Specify the version of Spring Boot you're using -->
+        <version>3.2.4</version>  <!-- Specify the version of Spring Boot you're using -->
         <relativePath/>
     </parent>
 
