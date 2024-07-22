@@ -254,7 +254,7 @@ public class GptRequestRunner {
 
         WebClient client = WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .baseUrl(GlobalConfig.INSTANCE.getEndpoint()) // OpenAI Chat API endpoint
+                .baseUrl(GlobalConfig.INSTANCE.getEndpoint())
                 .defaultHeader("Authorization", "Bearer " + GlobalConfig.INSTANCE.getOpenAIApiKey()) // Authorization header with Bearer token
                 .defaultHeader("Content-Type", "application/json")
                 .build();
