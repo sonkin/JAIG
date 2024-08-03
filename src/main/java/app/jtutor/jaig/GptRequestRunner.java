@@ -160,6 +160,9 @@ public class GptRequestRunner {
         inputText = inputText.replaceAll("\\\n", "\\\\n");
         inputText = inputText.replaceAll("\\\t", " ");
         inputText = inputText.replaceAll("```", " ");
+        inputText = inputText.replace("\\", "\\\\");
+        // Replace double quotes
+        inputText = inputText.replace("\"", "\\\"");
 
         Flux<String> eventStream;
         if (GlobalConfig.INSTANCE.isGptProxy()) {
@@ -288,7 +291,8 @@ public class GptRequestRunner {
         Flux<String> eventStream = client.post()
                 .bodyValue(requestBody)
                 .retrieve()
-                .bodyToFlux(String.class);
+                .bodyToFlux(String.class)
+                .doOnError(error -> System.out.println("\nError when sending request: " + error.getMessage()));
 
         return eventStream;
     }
@@ -369,10 +373,12 @@ public class GptRequestRunner {
     }
 
     private Flux<String> getEventStream(String endpoint, String inputText, String model, Double temperature){
-        if(endpoint.contains("azure")){
+        if (endpoint.contains("azure")){
             return getAzureOpenAIResponseEventStream(inputText, temperature);
         } else {
-            return extractContentFromJSONStream(getOpenAIResponseEventStream(inputText, model, temperature));
+            return extractContentFromJSONStream(
+                    getOpenAIResponseEventStream(
+                            inputText, model, temperature));
         }
     }
 
