@@ -115,7 +115,8 @@ public class RefactoringProcessor {
                         }
                         if (line.startsWith("//") || line.endsWith("{")
                                 || line.endsWith(";") || line.endsWith("/*")
-                                || line.contains(" = ")) {
+                                || line.contains(" = ") || line.endsWith("/**")
+                                || line.startsWith("@")) {
                             break;
                         }
                         startCodeLine++; // skip the lines which are not Java code
@@ -140,13 +141,7 @@ public class RefactoringProcessor {
                             // now detect if the code is continued
                             if (i+1<lastResponseLines.length) {
                                 String nextLine = lastResponseLines[i + 1].trim();
-                                if (nextLine.endsWith("{")
-                                        || nextLine.startsWith("//")
-                                        || nextLine.contains(" = ")
-                                        || nextLine.endsWith(";")
-                                        || nextLine.startsWith("package ")
-                                        || nextLine.startsWith("import ")
-                                ) continue; // code continues
+                                if (isCodeContinued(nextLine)) continue; // code continues
                             }
                             break; // this is not a code, stop here
                         }
@@ -228,6 +223,18 @@ public class RefactoringProcessor {
 
         // Display the collected input (excluding the double newline)
         return inputText.toString().trim();
+    }
+
+    private boolean isCodeContinued(String nextLine) {
+        return  nextLine.endsWith("{") || nextLine.startsWith("//") ||
+                nextLine.contains(" = ") || nextLine.endsWith(";") ||
+                nextLine.startsWith("package ") || nextLine.startsWith("import ") ||
+                nextLine.startsWith("/*") || nextLine.startsWith("@") ||
+                nextLine.startsWith("*") || nextLine.endsWith(",") ||
+                nextLine.endsWith("||") || nextLine.endsWith("&&") ||
+                nextLine.endsWith(")") || nextLine.endsWith("(") ||
+                nextLine.endsWith("+") || nextLine.endsWith("\"") ||
+                nextLine.endsWith("->") || nextLine.contains(" != ");
     }
 
 }
