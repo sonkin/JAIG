@@ -4,7 +4,7 @@ JAIG is a Java AI-powered Code Generator.
 
 JAIG is based on the OpenAI GPT models used for the code generation.
 
-You can read more on the [official website of the project JAIG.pro](https://jaig.pro).
+You can read more on the official website of the project: https://jaig.pro.
 ```
               *        *         *
            ***       **       ***
