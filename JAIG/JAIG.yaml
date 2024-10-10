@@ -93,6 +93,9 @@ promptsLibrary:
     Refactor this code fragment to a functional code.
   test:
     Write a test for this code fragment.
+  s:
+    Scan the code for potential issues or security vulnerabilities and suggest improvements,
+    and then generate the full solution with the improvements.
 
 # this prompt is used to merge the generated code with the existing code
 # [[old]] is the previously generated code (from -response-parsed-old folder)

@@ -35,6 +35,8 @@ You can read more on the official website of the project: https://jaig.pro.
 
 [JAIG Main ideas](docs/JAIGideas.pdf)
 
+[JAIG Integration with APIs](docs/JAIGIntegration.pdf)
+
 ## JAIG main features
 
 - Generate a code in IntelliJ IDEA
